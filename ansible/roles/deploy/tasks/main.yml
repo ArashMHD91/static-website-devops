@@ -1,0 +1,30 @@
+---
+- name: Create deployment directory
+  file:
+    path: /home/ubuntu/website
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
+- name: Pull Docker image
+  docker_image:
+    name: "{{ docker_image }}"
+    source: pull
+  vars:
+    docker_image: "arashmhd91/static-website-devops:latest"
+
+- name: Stop any existing container
+  docker_container:
+    name: static-website
+    state: absent
+
+- name: Run Docker container
+  docker_container:
+    name: static-website
+    image: "{{ docker_image }}"
+    state: started
+    ports:
+      - "80:80"
+    restart_policy: always
+  vars:
+    docker_image: "arashmhd91/static-website-devops:latest"
