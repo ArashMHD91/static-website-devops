@@ -29,17 +29,121 @@ This project demonstrates how to:
 - AWS account (free tier is sufficient)
 - Basic knowledge of Docker, Ansible, and GitHub Actions
 
-## Step 1: Set Up Repository
+## Step 1: Create a Simple Static Website
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/static-website-devops.git
-   cd static-website-devops
-   ```
+First, let's create a basic HTML site:
 
-2. Customize the `index.html` file with your content.
+### Create a new directory for your project:
+```bash
+mkdir static-website-devops
+cd static-website-devops
+```
 
-## Step 2: Configure AWS EC2
+### Create an `index.html` file:
+```bash
+touch index.html
+```
+
+### Add some basic content to your `index.html`:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevOps Demo Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello from DevOps!</h1>
+        <p>This page is served via a complete CI/CD pipeline.</p>
+    </div>
+</body>
+</html>
+```
+
+---
+
+## Step 2: Initialize a GitHub Repository
+
+### 🔧 Initialize a Git repository:
+```bash
+git init
+```
+
+### Create a `.gitignore` file:
+```bash
+touch .gitignore
+```
+
+### Add initial files to Git:
+```bash
+git add index.html .gitignore
+git commit -m "Initial commit with basic website"
+```
+
+### ☁️ Create a new repository on GitHub
+
+Then, link your local repo to the GitHub repo:
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/static-website-devops.git
+git branch -M main
+git push -u origin main
+```
+
+---
+
+## Step 3: Create a Dockerfile
+
+### Create a `Dockerfile`:
+```bash
+touch Dockerfile
+```
+
+### Add the following content:
+```Dockerfile
+# Use the official Nginx image as base
+FROM nginx:alpine
+
+# Copy the static website to Nginx's default serving directory
+COPY index.html /usr/share/nginx/html/
+
+# Expose port 80
+EXPOSE 80
+
+# The default command starts Nginx
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+### Commit and push this change:
+```bash
+git add Dockerfile
+git commit -m "Add Dockerfile for Nginx container"
+git push origin main
+```
+
+---
+
+## Step 4: Configure AWS EC2
 
 1. Create an EC2 instance:
    - Log in to the AWS Management Console
@@ -58,7 +162,7 @@ This project demonstrates how to:
    chmod 400 path/to/your-key.pem
    ```
 
-## Step 3: Configure Your Local Environment
+## Step 5: Configure Your Local Environment
 
 1. Install Ansible:
    ```bash
@@ -85,7 +189,7 @@ This project demonstrates how to:
    ```
    You should see a successful "pong" response.
 
-## Step 4: Docker Hub Setup
+## Step 6: Docker Hub Setup
 
 1. Create an account at [Docker Hub](https://hub.docker.com) if you don't have one
 2. Create a new repository named `static-website-devops`
@@ -96,7 +200,7 @@ This project demonstrates how to:
    - Select "Read & Write" permissions
    - Copy the token (you won't see it again!)
 
-## Step 5: Configure GitHub Secrets
+## Step 7: Configure GitHub Secrets
 
 1. Go to your GitHub repository
 2. Navigate to Settings > Secrets and variables > Actions
@@ -106,7 +210,7 @@ This project demonstrates how to:
    - `EC2_HOST`: Your EC2 instance public IP address 
    - `SSH_PRIVATE_KEY`: The entire content of your EC2 private key (.pem file)
 
-## Step 6: GitHub Actions Workflow
+## Step 8: GitHub Actions Workflow
 
 The repository includes a GitHub Actions workflow in `.github/workflows/deploy.yml` that:
 1. Builds a Docker image with your static website
@@ -115,7 +219,7 @@ The repository includes a GitHub Actions workflow in `.github/workflows/deploy.y
 
 No changes are needed to this file unless you want to customize the workflow.
 
-## Step 7: Deployment
+## Step 9: Deployment
 
 1. Commit and push changes to trigger the CI/CD pipeline:
    ```bash
